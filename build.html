@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Angular QuickStart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Polyfill(s) for older browsers -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="dist/vendor.bundle.js"></script>
+    <script src="dist/app.bundle.js"></script>
+
+    <script>
+        function mockAjax(url, data){
+            console.log('mockAjax', url, data);
+            data = JSON.parse(data.data);
+            console.log('mockAjax deJSON', data);
+            var r = {
+                status: 'ok',
+                message: '',
+                list: []
+            };
+            switch (url) {
+                case '/add':
+                    r.list = [
+                        {
+                            id: '1',
+                            name: 'First session Jura FR',
+                            languageKey: 'fr',
+                            cantonKey: 'ju',
+                            isInAgenda: data.id == '1',
+                            isCanAdd: false,
+                            isCanRemove: data.id == '1'
+                        },
+                        {
+                            id: '2',
+                            name: 'Second session Zug EN',
+                            languageKey: 'en',
+                            cantonKey: 'zu',
+                            isInAgenda: data.id == '2',
+                            isCanAdd: false,
+                            isCanRemove: data.id == '2'
+                        }
+                    ];
+                    break;
+
+                case '/remove':
+                    r.list = [
+                        {
+                            id: '1',
+                            name: 'First session Jura FR',
+                            languageKey: 'fr',
+                            cantonKey: 'ju',
+                            isInAgenda: false,
+                            isCanAdd: true,
+                            isCanRemove: false
+                        },
+                        {
+                            id: '2',
+                            name: 'Second session Zug EN',
+                            languageKey: 'en',
+                            cantonKey: 'zu',
+                            isInAgenda: false,
+                            isCanAdd: true,
+                            isCanRemove: false
+                        }
+                    ];
+                    break;
+            }
+            return r;
+        }
+
+        var options = {
+            name: 'bebebe',
+            mockAJAX: mockAjax,
+
+            addToMyAgendaUrl: '/add',
+            removeFromMyAgendaUrl: '/remove',
+            filters: [
+                {
+                    key: 'cantons',
+                    label: '',
+                    fieldName: 'cantonKey',
+                    value: 'ju',
+                    values: [
+                        {label: 'All cantons', key: ''},
+                        {label: 'Jura', key: 'ju'},
+                        {label: 'Zug', key: 'zu'}
+                    ]
+                },
+                {
+                    key: 'languages',
+                    label: '',
+                    fieldName: 'languageKey',
+                    values: [
+                        {label: 'All languages', key: ''},
+                        {label: 'English', key: 'en'},
+                        {label: 'French', key: 'fr'}
+                    ]
+                }
+            ],
+            sessions: [
+                {
+                    id: '1',
+                    name: 'First session Jura FR',
+                    languageKey: 'fr',
+                    cantonKey: 'ju',
+                    isInAgenda: false,
+                    isCanAdd: false,
+                    isCanRemove: false
+                },
+                {
+                    id: '2',
+                    name: 'Second session Zug EN',
+                    languageKey: 'en',
+                    cantonKey: 'zu',
+                    isInAgenda: true,
+                    isCanAdd: false,
+                    isCanRemove: true
+                }
+            ]
+        };
+
+        RunApplication(options);
+    </script>
+</head>
+
+<body>
+<session-public-plugin>Loading...</session-public-plugin>
+</body>
+</html>
