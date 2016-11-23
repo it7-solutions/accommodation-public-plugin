@@ -13,4 +13,8 @@ export class Collection<T extends CollectionItem> {
     public get(id: string): T {
         return this.items.find(i => id === i.id);
     }
+
+    public getByIds(ids: string[]): T[] {
+        return ids.map(id => this.get(id)) as T[];
+    }
 }

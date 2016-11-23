@@ -87,7 +87,7 @@ module.exports = function(config) {
     // HtmlReporter configuration
     htmlReporter: {
       // Open this file to see results in browser
-      outputFile: '_test-output/tests.html',
+      outputFile: 'tests.html',
 
       // Optional
       pageTitle: 'Unit Tests',

@@ -78,67 +78,38 @@
             name: 'bebebe',
             mockAJAX: mockAjax,
 
-            addToMyAgendaUrl: '/add',
-            removeFromMyAgendaUrl: '/remove',
-            filters: [
-                {
-                    key: 'cantons',
-                    label: '',
-                    fieldName: 'cantonKey',
-                    value: 'ju',
-                    values: [
-                        {label: 'All cantons', key: ''},
-                        {label: 'Jura', key: 'ju'},
-                        {label: 'Zug', key: 'zg'},
-                        {label: 'Zürich', key: 'zh'}
-                    ]
-                },
-                {
-                    key: 'languages',
-                    label: '',
-                    fieldName: 'languageKey',
-                    values: [
-                        {label: 'All languages', key: ''},
-                        {label: 'English', key: 'en'},
-                        {label: 'French', key: 'fr'}
-                    ]
-                }
+            formId: 'mod_accommodation_pluginMainForm',
+            formAction: '/submit',
+
+            hotel_id: 'hilton',
+            room_type_id: '2',
+            date_input: '01',
+            date_output:  '02',
+            sharing_room_with: 'Mom',
+
+            hotels: [
+                {id: 'hilton', name: 'Hilton'},
+                {id: 'dnipro', name: 'Dnipro'},
+                {id: 'odessa', name: 'Odessa'}
             ],
-            sortings: [
-                {
-                    key: 'name',
-                    fieldName: 'name',
-                    active: true,
-                    descending: true
-                },
-                {
-                    key: 'canton',
-                    fieldName: 'cantonKey'
-                }
+            rooms: [
+                {id:'1', hotel_id: 'hilton', name: 'Hilton single', periods:[['01','02','03','04','05'],['07']]},
+                {id:'2', hotel_id: 'hilton', name: 'Hilton double', periods:[['01','02'],['06','07']], allow_share: true},
+                {id:'3', hotel_id: 'dnipro', name: 'Dnipro double', periods:[['01'],['03','04','05']], allow_share: true},
+                {id:'4', hotel_id: 'odessa', name: 'Odessa single', periods:[['01','02','03'],['04','05'],['07']]}
             ],
-            sessions: [
-                {
-                    id: '1',
-                    name: 'First session Jura FR',
-                    languageKey: 'fr',
-                    cantonKey: 'JU',
-                    isInAgenda: false,
-                    isCanAdd: false,
-                    isCanRemove: false
-                },
-                {
-                    id: '2',
-                    name: 'Second session Zug EN',
-                    languageKey: 'en',
-                    cantonKey: 'ZG',
-                    isInAgenda: true,
-                    isCanAdd: false,
-                    isCanRemove: true
-                }
+            days: [
+                {id:'01', name: '01.11.2016'},
+                {id:'02', name: '02.11.2016'},
+                {id:'03', name: '03.11.2016'},
+                {id:'04', name: '04.11.2016'},
+                {id:'05', name: '05.11.2016'},
+                {id:'06', name: '06.11.2016'},
+                {id:'07', name: '07.11.2016'}
             ],
+
             translations:[
-                {code: 'sessions', value: '-Sessions-'},
-                {code: 'bebebe', value: '-Bebebe-'}
+                {code: 'translate_test', value: '-Translate Test-'}
             ],
             onTranslate: function(){}
         };

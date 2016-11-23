@@ -1,6 +1,6 @@
 {
   "name": "@it7-solutions/accommodation-public-plugin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Public plugin for accommodation module",
   "scripts": {
     "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",

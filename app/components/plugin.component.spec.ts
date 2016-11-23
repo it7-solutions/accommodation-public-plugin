@@ -1,6 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import { TestBed, async }      from '@angular/core/testing';
 import { By }           from '@angular/platform-browser';
+import {FormsModule} from "@angular/forms";
 
 import { PluginComponent } from './plugin.component';
 import { PluginConfig } from '../services/plugin.config';
@@ -19,6 +20,7 @@ describe('PluginComponent with TCB', function () {
   beforeEach(async(() => {
     TestBed
         .configureTestingModule({
+          imports: [FormsModule],
           declarations: [PluginComponent],
           providers: [
               {provide: PluginConfig, useValue: {mockAJAX: true}},

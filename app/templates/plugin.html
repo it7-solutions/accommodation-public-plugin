@@ -1,1 +1,32 @@
 <h1>test app</h1>
+
+<form action="{{ config.formAction }}" id="{{ config.formId }}">
+<select #hotelId (change)="onHotelChange(hotelId.value)" [(ngModel)]="hotel_id" name="hotel_id" title="Hotel">
+    <option value=""></option>
+    <option *ngFor="let hotel of hotels" [value]="hotel.id">{{ hotel.name }}</option>
+</select>
+
+<select #roomTypeId (change)="onRoomChange(roomTypeId.value)" [(ngModel)]="room_type_id"  name="room_type_id" title="Room">
+    <option value=""></option>
+    <option *ngFor="let room of rooms" value="{{ room.id }}">{{ room.name }}</option>
+</select>
+
+<select #dateInput (change)="onCheckInChange(dateInput.value)" [(ngModel)]="date_input" name="date_input" title="CheckIn">
+    <option value=""></option>
+    <option *ngFor="let day of checkIn" value="{{ day.id }}">{{ day.name }}</option>
+</select>
+
+<select #dateOutput (change)="onCheckOutChange(dateOutput.value)" [(ngModel)]="date_output" name="date_output" title="CheckOut">
+    <option value=""></option>
+    <option *ngFor="let day of checkOut" value="{{ day.id }}">{{ day.name }}</option>
+</select>
+
+<input [readonly]="!allowShare" [(ngModel)]="sharing_room_with"  name="sharing_room_with" title="Share">
+</form>
+
+<style>
+    input[readonly] {
+        background-color: #999999;
+    }
+</style>
+
