@@ -40,6 +40,12 @@ export class PluginComponent {
         this.updateLists();
     }
 
+    public ngAfterViewChecked() {
+        if('function' === typeof this.config.onChange) {
+            this.config.onChange();
+        }
+    }
+
     public onHotelChange(id: string) {
         this.stainer.setHotel(id);
         this.updateLists();

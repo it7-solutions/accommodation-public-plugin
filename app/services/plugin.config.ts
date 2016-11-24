@@ -21,6 +21,8 @@ export interface PluginOptions {
     rooms: Room[]
     days: Day[]
 
+    onChange?: () => {}
+
 }
 
 @Injectable()
@@ -43,6 +45,8 @@ export class PluginConfig {
 
     translations: any[] = [];
     onTranslate: any;
+
+    onChange: () => {};
 
     constructor(options: PluginOptions) {
         Object.assign(this, options);
