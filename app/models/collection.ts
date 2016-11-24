@@ -15,6 +15,6 @@ export class Collection<T extends CollectionItem> {
     }
 
     public getByIds(ids: string[]): T[] {
-        return ids.map(id => this.get(id)) as T[];
+        return this.items.filter(i => !!ids.find(id => id === i.id));
     }
 }
