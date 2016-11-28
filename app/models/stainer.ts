@@ -68,18 +68,18 @@ export class Stainer {
             if (this.checkOut) {
                 // For cases filled Check-in and/or-not Check-out
                 return rooms.filter(r => {
-                    return this.findPeriod(r, this.checkIn.id, this.checkOut.id).length
+                    return !!this.findPeriod(r, this.checkIn.id, this.checkOut.id).length
                 });
             } else {
                 // For cases filled Check-in only
                 return rooms.filter(r => {
-                    return this.findPeriod(r, this.checkIn.id).length
+                    return !!this.findPeriod(r, this.checkIn.id).length
                 });
             }
         } else if (this.checkOut) {
             // For cases filled Check-out only
             return rooms.filter(r => {
-                return this.findPeriod(r, this.checkOut.id).length
+                return !!this.findPeriod(r, this.checkOut.id).length
             });
         }
         return rooms;
@@ -150,9 +150,9 @@ export class Stainer {
     private findPeriod(room: Room, date1Id: string, date2Id: string = ''): string[] {
         let periods: string[][];
         if (date2Id) {
-            periods = room.periods.filter(p => p.find(id => id === date1Id) && p.find(id => id === date2Id));
+            periods = room.periods.filter(p => !!(p.find(id => id === date1Id) && p.find(id => id === date2Id)));
         } else {
-            periods = room.periods.filter(p => p.find(id => id === date1Id));
+            periods = room.periods.filter(p => !!p.find(id => id === date1Id));
         }
         return periods.length > 0 ? periods[0] : [];
     }

@@ -29,7 +29,7 @@ export class PluginComponent {
 
     constructor(
         public config: PluginConfig,
-        private err: It7ErrorService,
+        private err: It7ErrorService
     ) {
         this.stainer = new Stainer(
             new Collection<Hotel>(config.hotels),
