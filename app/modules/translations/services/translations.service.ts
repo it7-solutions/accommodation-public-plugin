@@ -19,7 +19,7 @@ export class TranslationsService {
         this.onTranslate = callback;
     }
 
-    public translate(text: string, parameters: string[]): string {
+    public translate(text: string, parameters?: string[]): string {
         return this.getTranslation(this.buildCode(text), text, parameters);
     }
 
@@ -29,7 +29,7 @@ export class TranslationsService {
         return code;
     }
 
-    private getTranslation(code:string, fallback: string, parameters: string[]):string{
+    private getTranslation(code:string, fallback: string, parameters?: string[]):string{
         var translation: any;
         // If exist custom translate function - call
         if(typeof this.onTranslate === 'function'){

@@ -23,6 +23,8 @@ export interface PluginOptions {
 
     onChange?: () => {}
 
+    onInit?: (callback: any) => any
+
 }
 
 @Injectable()
@@ -47,6 +49,8 @@ export class PluginConfig {
     onTranslate: any;
 
     onChange: () => {};
+
+    onInit: (callback: any) => any
 
     constructor(options: PluginOptions) {
         Object.assign(this, options);

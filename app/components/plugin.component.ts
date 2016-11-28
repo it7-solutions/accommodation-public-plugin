@@ -1,4 +1,4 @@
-import {Component, Output, Input} from '@angular/core';
+import {Component, Output, Input, OnInit} from '@angular/core';
 
 import {PluginConfig} from "../services/plugin.config";
 import {It7ErrorService} from "../services/it7-error.service";
@@ -7,12 +7,15 @@ import {Hotel} from '../models/hotel';
 import {Day} from '../models/day';
 import {Stainer} from '../models/stainer';
 import {Collection} from '../models/collection';
+import {ValidateField} from "../models/validate";
+import {Validator} from "../models/validator";
+import {TranslationsService} from "../modules/translations/services/translations.service";
 
 @Component({
     selector: 'session-public-plugin',
     templateUrl: PluginConfig.buildTemplateUrl('templates/plugin.html')
 })
-export class PluginComponent {
+export class PluginComponent implements OnInit{
     public hotels: Hotel[];
     public rooms: Room[];
     public checkIn: Day[];
@@ -26,10 +29,12 @@ export class PluginComponent {
     sharing_room_with: string = '';
 
     private stainer: Stainer;
+    private validator: Validator;
 
     constructor(
         public config: PluginConfig,
-        private err: It7ErrorService
+        private err: It7ErrorService,
+        private translator: TranslationsService
     ) {
         this.stainer = new Stainer(
             new Collection<Hotel>(config.hotels),
@@ -38,6 +43,8 @@ export class PluginComponent {
         );
         this.initInputData(config);
         this.updateLists();
+
+        console.log('config', this.config);
     }
 
     public ngAfterViewChecked() {
@@ -95,4 +102,43 @@ export class PluginComponent {
         this.checkOut = this.stainer.getCheckOutDays();
     }
 
+    validateFields: {[key:string] : ValidateField} = {
+        hotel_id: {
+            isValid: true,
+            messageText: this.translator.translate('This field is required'),
+            isRequired: true
+        },
+        room_type_id: {
+            isValid: true,
+            messageText: this.translator.translate('This field is required'),
+            isRequired: true
+        },
+        date_input: {
+            isValid: true,
+            messageText: this.translator.translate('This field is required'),
+            isRequired: true
+        },
+        date_output: {
+            isValid: true,
+            messageText: this.translator.translate('This field is required'),
+            isRequired: true
+        },
+        sharing_room_with: {
+            isValid: true,
+            messageText: this.translator.translate('This field is required'),
+            isRequired: false
+        }
+
+    };
+
+    validate() {
+        return this.validator.validate();
+    }
+
+    ngOnInit() {
+        this.validator = new Validator(this.validateFields, this);
+
+        this.config.onInit(() => this.validate());
+
+    }
 }

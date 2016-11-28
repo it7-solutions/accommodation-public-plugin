@@ -1,26 +1,32 @@
 <h1>test app</h1>
 
 <form action="{{ config.formAction }}" id="{{ config.formId }}">
+
+<div class="message-error" *ngIf="!validateFields.hotel_id.isValid">{{validateFields.hotel_id.messageText}}</div>
 <select #hotelId (change)="onHotelChange(hotelId.value)" [(ngModel)]="hotel_id" name="hotel_id" title="Hotel">
     <option value=""></option>
     <option *ngFor="let hotel of hotels" [value]="hotel.id">{{ hotel.name }}</option>
 </select>
 
+<div class="message-error" *ngIf="!validateFields.room_type_id.isValid">{{validateFields.room_type_id.messageText}}</div>
 <select #roomTypeId (change)="onRoomChange(roomTypeId.value)" [(ngModel)]="room_type_id"  name="room_type_id" title="Room">
     <option value=""></option>
     <option *ngFor="let room of rooms" value="{{ room.id }}">{{ room.name }}</option>
 </select>
 
+<div class="message-error" *ngIf="!validateFields.date_input.isValid">{{validateFields.date_input.messageText}}</div>
 <select #dateInput (change)="onCheckInChange(dateInput.value)" [(ngModel)]="date_input" name="date_input" title="CheckIn">
     <option value=""></option>
     <option *ngFor="let day of checkIn" value="{{ day.id }}">{{ day.name }}</option>
 </select>
 
+<div class="message-error" *ngIf="!validateFields.date_output.isValid">{{validateFields.date_output.messageText}}</div>
 <select #dateOutput (change)="onCheckOutChange(dateOutput.value)" [(ngModel)]="date_output" name="date_output" title="CheckOut">
     <option value=""></option>
     <option *ngFor="let day of checkOut" value="{{ day.id }}">{{ day.name }}</option>
 </select>
 
+<div class="message-error" *ngIf="!validateFields.sharing_room_with.isValid">{{validateFields.sharing_room_with.messageText}}</div>
 <input [readonly]="!allowShare" [(ngModel)]="sharing_room_with"  name="sharing_room_with" title="Share">
 </form>
 
