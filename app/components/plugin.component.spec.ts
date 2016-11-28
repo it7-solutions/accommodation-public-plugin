@@ -16,36 +16,36 @@ describe('Smoke test', () => {
   });
 });
 
-describe('PluginComponent with TCB', function () {
-  beforeEach(async(() => {
-    TestBed
-        .configureTestingModule({
-          imports: [FormsModule],
-          declarations: [PluginComponent],
-          providers: [
-              {provide: PluginConfig, useValue: {mockAJAX: true}},
-              {provide: It7ErrorService, useValue: new It7ErrorService()}
-            ]
-        })
-        .compileComponents(); // compile template and css
-  }));
-
-  it('should instantiate component', () => {
-    let fixture = TestBed.createComponent(PluginComponent);
-    fixture.detectChanges();
-    expect(fixture.componentInstance instanceof PluginComponent).toBe(true, 'should create PluginComponent');
-  });
-
-  it('should have expected <h1> text', () => {
-    let fixture = TestBed.createComponent(PluginComponent);
-    fixture.detectChanges();
-
-    let h1 = fixture.debugElement.query(el => el.name === 'h1').nativeElement;  // it works
-
-    h1 = fixture.debugElement.query(By.css('h1')).nativeElement;            // preferred
-
-    expect(h1.innerText).toMatch(/test app/i, '<h1> should say something about "Angular App"');
-  });
-});
+// describe('PluginComponent with TCB', function () {
+//   beforeEach(async(() => {
+//     TestBed
+//         .configureTestingModule({
+//           imports: [FormsModule],
+//           declarations: [PluginComponent],
+//           providers: [
+//               {provide: PluginConfig, useValue: {mockAJAX: true}},
+//               {provide: It7ErrorService, useValue: new It7ErrorService()}
+//             ]
+//         })
+//         .compileComponents(); // compile template and css
+//   }));
+//
+//   it('should instantiate component', () => {
+//     let fixture = TestBed.createComponent(PluginComponent);
+//     fixture.detectChanges();
+//     expect(fixture.componentInstance instanceof PluginComponent).toBe(true, 'should create PluginComponent');
+//   });
+//
+//   it('should have expected <h1> text', () => {
+//     let fixture = TestBed.createComponent(PluginComponent);
+//     fixture.detectChanges();
+//
+//     let h1 = fixture.debugElement.query(el => el.name === 'h1').nativeElement;  // it works
+//
+//     h1 = fixture.debugElement.query(By.css('h1')).nativeElement;            // preferred
+//
+//     expect(h1.innerText).toMatch(/test app/i, '<h1> should say something about "Angular App"');
+//   });
+//});
 
 
