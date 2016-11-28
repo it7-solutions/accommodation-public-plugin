@@ -89,7 +89,7 @@ export class Stainer {
         if (this.checkOut) {
             if (this.room) {
                 let period = this.findPeriod(this.room, this.checkOut.id);
-                let ids = this.getDayIdsTo(period, this.checkOut.id);
+                let ids = this.getDayIdsToButExcluding(period, this.checkOut.id);
                 return this.days.getByIds(ids);
             } else if (this.hotel) {
                 let ids: string[] = [];
@@ -97,7 +97,7 @@ export class Stainer {
                     r => {
                         if(this.hotel.id === r.hotel_id) {
                             let period = this.findPeriod(r, this.checkOut.id);
-                            this.getDayIdsTo(period, this.checkOut.id).forEach(id => ids.push(id));
+                            this.getDayIdsToButExcluding(period, this.checkOut.id).forEach(id => ids.push(id));
                         }
                     }
                 );
@@ -112,7 +112,7 @@ export class Stainer {
             if (this.room) {
                 // If select Room
                 let period = this.findPeriod(this.room, this.checkIn.id);
-                let ids = this.getDayIdsFrom(period, this.checkIn.id);
+                let ids = this.getDayIdsFromButExcluding(period, this.checkIn.id);
                 return this.days.getByIds(ids);
             } else if (this.hotel) {
                 // If select Only Hotel
@@ -121,7 +121,7 @@ export class Stainer {
                     r => {
                         if(this.hotel.id === r.hotel_id){
                             let period = this.findPeriod(r, this.checkIn.id);
-                            this.getDayIdsFrom(period, this.checkIn.id).forEach(id => ids.push(id));
+                            this.getDayIdsFromButExcluding(period, this.checkIn.id).forEach(id => ids.push(id));
                         }
                     }
                 );
@@ -131,20 +131,40 @@ export class Stainer {
         return days;
     }
 
-    private getDayIdsTo(period: string[], dayId: string): string[] {
+    /**
+     * Returns identifiers days from the beginning of the period until a specified date. But not including.
+     *
+     * @param period
+     * @param dayId
+     * @returns {string[]}
+     */
+    private getDayIdsToButExcluding(period: string[], dayId: string): string[] {
         let found = false;
         return period.filter(
             id => {
                 let current = id === dayId;
                 found = (found || current);
-                return !found || current;
+                return !found;
             }
         );
     }
 
-    private getDayIdsFrom(period: string[], dayId: string) : string[] {
+    /**
+     * Returns identifiers days from the specified date (but not including) until the end of the period.
+     *
+     * @param period
+     * @param dayId
+     * @returns {string[]}
+     */
+    private getDayIdsFromButExcluding(period: string[], dayId: string) : string[] {
         let found = false;
-        return period.filter(id => found = (found || id === dayId));
+        return period.filter(
+            id => {
+                let last = found;
+                found = (found || id === dayId);
+                return last;
+            }
+        );
     }
 
     private findPeriod(room: Room, date1Id: string, date2Id: string = ''): string[] {
