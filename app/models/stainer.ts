@@ -102,6 +102,16 @@ export class Stainer {
                     }
                 );
                 return this.days.getByIds(ids);
+            } else {
+                // If Hotel not selected
+                let ids: string[] = [];
+                this.rooms.items.forEach(
+                    r => {
+                        let period = this.findPeriod(r, this.checkOut.id);
+                        this.getDayIdsToButExcluding(period, this.checkOut.id).forEach(id => ids.push(id));
+                    }
+                );
+                return this.days.getByIds(ids);
             }
         }
         return days;
@@ -123,6 +133,16 @@ export class Stainer {
                             let period = this.findPeriod(r, this.checkIn.id);
                             this.getDayIdsFromButExcluding(period, this.checkIn.id).forEach(id => ids.push(id));
                         }
+                    }
+                );
+                return this.days.getByIds(ids);
+            } else {
+                // If Hotel not selected
+                let ids: string[] = [];
+                this.rooms.items.forEach(
+                    r => {
+                        let period = this.findPeriod(r, this.checkIn.id);
+                        this.getDayIdsFromButExcluding(period, this.checkIn.id).forEach(id => ids.push(id));
                     }
                 );
                 return this.days.getByIds(ids);

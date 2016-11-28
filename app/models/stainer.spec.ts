@@ -34,6 +34,94 @@ describe('Stainer class', () => {
         });
     });
 
+    describe('When select check-in only', () => {
+        let stainer: Stainer;
+        beforeEach(() => {
+            stainer = createStainer(
+                [{id: '10'}, {id: '11'}],
+                [
+                    {id: '1', hotel_id: '10', periods: [['05.11'], ['01.11', '02.11', '03.11']]},
+                    {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
+                    {id: '3', hotel_id: '10', periods: [['01.11', '02.11', '03.11']]},
+                    {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]}
+                ],
+                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+            );
+            stainer.setCheckInDay('02.11');
+        });
+
+        it('For check-in should return all days of rooms', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11',  '04.11', '05.11']);
+        });
+
+        it('For check-out should return days of periods with check-in date and later check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11', '04.11']);
+        });
+
+        it('For rooms return empty array', () => {
+            expect(stainer.getRooms().length).toEqual(0);
+        });
+    });
+
+    describe('When select check-out only', () => {
+        let stainer: Stainer;
+        beforeEach(() => {
+            stainer = createStainer(
+                [{id: '10'}, {id: '11'}],
+                [
+                    {id: '1', hotel_id: '10', periods: [['05.11'], ['02.11', '03.11']]},
+                    {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
+                    {id: '3', hotel_id: '10', periods: [['02.11', '03.11']]},
+                    {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]}
+                ],
+                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+            );
+            stainer.setCheckOutDay('03.11');
+        });
+
+        it('For check-in should return days of periods with check-out date and earlier check-out', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11']);
+        });
+
+        it('For check-out should return all days of rooms', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11',  '04.11', '05.11']);
+        });
+
+        it('For rooms return empty array', () => {
+            expect(stainer.getRooms().length).toEqual(0);
+        });
+    });
+
+    describe('When select dates only - check-out and check-out', () => {
+        let stainer: Stainer;
+        beforeEach(() => {
+            stainer = createStainer(
+                [{id: '10'}, {id: '11'}],
+                [
+                    {id: '1', hotel_id: '10', periods: [['05.11'], ['02.11', '03.11']]},
+                    {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
+                    {id: '3', hotel_id: '10', periods: [['02.11', '03.11']]},
+                    {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]}
+                ],
+                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+            );
+            stainer.setCheckInDay('02.11');
+            stainer.setCheckOutDay('03.11');
+        });
+
+        it('For check-in should return days of periods with check-out date and earlier check-out', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11']);
+        });
+
+        it('For check-out should return days of periods with check-in date and later check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11', '04.11']);
+        });
+
+        it('For rooms return empty array', () => {
+            expect(stainer.getRooms().length).toEqual(0);
+        });
+    });
+
     describe('When select hotel only', () => {
         let stainer: Stainer;
         beforeEach(() => {
