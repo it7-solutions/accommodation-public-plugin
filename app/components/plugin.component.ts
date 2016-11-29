@@ -1,4 +1,4 @@
-import {Component, Output, Input, OnInit} from '@angular/core';
+import {Component, Output, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 
 import {PluginConfig} from "../services/plugin.config";
 import {It7ErrorService} from "../services/it7-error.service";
@@ -34,7 +34,8 @@ export class PluginComponent implements OnInit{
     constructor(
         public config: PluginConfig,
         private err: It7ErrorService,
-        private translator: TranslationsService
+        private translator: TranslationsService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         this.stainer = new Stainer(
             new Collection<Hotel>(config.hotels),
@@ -136,13 +137,16 @@ export class PluginComponent implements OnInit{
     };
 
     validate() {
-        return this.validator.validate();
+        let v = this.validator.validate();
+        this.changeDetectorRef.detectChanges();
+        return v;
     }
 
     ngOnInit() {
         this.validator = new Validator(this.validateFields, this);
-
-        this.config.onInit(() => this.validate());
+        if('function' === typeof this.config.onChange) {
+            this.config.onInit(() => this.validate());
+        }
 
     }
 }

@@ -33,12 +33,12 @@ export class Validator {
             var field:ValidateField = this.validateFields[fieldName];
             if(field.isRequired) {
                 var value = this.getValueByKey(fieldName);
-                console.log('value', value);
                 if(!value) {
                     field.isValid = false;
                     // field.messageText = (field.messageText ? field.messageText + '. ' : '') + 'This field is required';
                 }
             }
+            console.log('field', field);
         }
     }
 
