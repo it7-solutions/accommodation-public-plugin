@@ -96,10 +96,14 @@ export class PluginComponent implements OnInit{
     private updateLists() {
         this.allowShare = this.stainer.room ? this.stainer.room.allow_share : false;
 
-        this.hotels = this.stainer.getHotel();
+        this.hotels = this.stainer.getHotels();
         this.rooms = this.stainer.getRooms();
         this.checkIn = this.stainer.getCheckInDays();
         this.checkOut = this.stainer.getCheckOutDays();
+
+        if(Stainer.actualizeData(this)) {
+            this.updateLists();
+        }
     }
 
     validateFields: {[key:string] : ValidateField} = {

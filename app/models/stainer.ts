@@ -5,6 +5,16 @@ import {Hotel} from './hotel';
 /**
  * Created by Buzzer on 21.11.2016.
  */
+export interface DataContainer {
+    hotel_id: string
+    room_type_id: string
+    date_input: string
+    date_output: string
+    hotels: Hotel[];
+    rooms: Room[];
+    checkIn: Day[];
+    checkOut: Day[];
+}
 
 export class Stainer {
     hotels: Collection<Hotel>;
@@ -44,8 +54,8 @@ export class Stainer {
         this.checkOut = this.days.get(id);
     }
 
-    public getHotel(): Hotel[] {
-        return this.hotels.items;
+    public getHotels(): Hotel[] {
+        return this.filterHotelsGivenDates();
     }
 
     public getRooms(): Room[] {
@@ -61,6 +71,51 @@ export class Stainer {
     public getCheckOutDays(): Day[] {
         let days: Day[] = this.room ? this.getDaysForRoom(this.room) : this.getAllRoomsDays();
         return this.filterDaysGivenCheckIn(days);
+    }
+
+    public static actualizeData(dc: DataContainer): boolean {
+        let changed = false;
+
+        // Room id may be outside the allowable values
+        if(!dc.rooms.map(r => r.id).find(id => id === dc.room_type_id) && dc.room_type_id !== '') {
+            dc.room_type_id = '';
+            changed = true;
+        }
+
+        return changed;
+    }
+
+    private filterHotelsGivenDates() : Hotel[] {
+        let hotels: Hotel[] = this.hotels.items;
+        if (this.checkIn) {
+            if (this.checkOut) {
+                // For cases filled Check-in and/or-not Check-out
+                return hotels.filter(h => {
+                    return !!this.getHotelRooms(h.id).filter(r => {
+                        return !!this.findPeriod(r, this.checkIn.id, this.checkOut.id).length
+                    }).length;
+                });
+            } else {
+                // For cases filled Check-in only
+                return hotels.filter(h => {
+                    return !!this.getHotelRooms(h.id).filter(r => {
+                        return !!this.findPeriod(r, this.checkIn.id).length
+                    }).length;
+                });
+            }
+        } else if (this.checkOut) {
+            // For cases filled Check-out only
+            return hotels.filter(h => {
+                return !!this.getHotelRooms(h.id).filter(r => {
+                    return !!this.findPeriod(r, this.checkOut.id).length
+                }).length;
+            });
+        }
+        return hotels;
+    }
+
+    private getHotelRooms(id: string): Room[] {
+        return this.rooms.items.filter(r => r.hotel_id === id);
     }
 
     private filterRoomsGivenDates(rooms: Room[]): Room[] {
