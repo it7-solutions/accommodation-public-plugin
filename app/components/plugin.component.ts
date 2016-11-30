@@ -144,7 +144,7 @@ export class PluginComponent implements OnInit{
 
     ngOnInit() {
         this.validator = new Validator(this.validateFields, this);
-        if('function' === typeof this.config.onChange) {
+        if('function' === typeof this.config.onInit) {
             this.config.onInit(() => this.validate());
         }
 

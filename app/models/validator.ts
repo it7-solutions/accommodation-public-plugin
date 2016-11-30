@@ -38,7 +38,7 @@ export class Validator {
                     // field.messageText = (field.messageText ? field.messageText + '. ' : '') + 'This field is required';
                 }
             }
-            console.log('field', field);
+            // console.log('field', field);
         }
     }
 
