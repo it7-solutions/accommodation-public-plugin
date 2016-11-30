@@ -136,10 +136,22 @@ export class PluginComponent implements OnInit{
 
     };
 
-    validate() {
-        let v = this.validator.validate();
+    validate(): boolean {
+        let v: boolean;
+        if(this.isAllFieldsEmpty()){
+            // Valid if all field empty
+            this.validator.setValid();
+            v = true;
+        } else {
+            // Check if have filled field
+            v = this.validator.validate();
+        }
         this.changeDetectorRef.detectChanges();
         return v;
+    }
+
+    private isAllFieldsEmpty(): boolean {
+        return !this.hotel_id && !this.room_type_id && !this.date_input && !this.date_output;
     }
 
     ngOnInit() {

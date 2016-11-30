@@ -20,6 +20,10 @@ export class Validator {
         return this.checkValid();
     }
 
+    public setValid() {
+        this.setAllValid();
+    }
+
     private setAllValid() {
         for(var fieldName in this.validateFields) {
             var field:ValidateField = this.validateFields[fieldName];
