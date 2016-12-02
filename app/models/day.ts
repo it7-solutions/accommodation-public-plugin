@@ -4,4 +4,7 @@ import {CollectionItem} from './collectionItem';
  */
 
 export class Day extends CollectionItem {
+    name: string;
+    id_check_out: string;
+    name_check_out: string;
 }

@@ -23,11 +23,12 @@
 <div class="message-error" *ngIf="!validateFields.date_output.isValid">{{validateFields.date_output.messageText}}</div>
 <select #dateOutput (change)="onCheckOutChange(dateOutput.value)" [(ngModel)]="date_output" name="date_output" title="CheckOut">
     <option value=""></option>
-    <option *ngFor="let day of checkOut" value="{{ day.id }}">{{ day.name }}</option>
+    <option *ngFor="let day of checkOut" value="{{ day.id_check_out }}">{{ day.name_check_out }}</option>
 </select>
 
 <div class="message-error" *ngIf="!validateFields.sharing_room_with.isValid">{{validateFields.sharing_room_with.messageText}}</div>
-<input [readonly]="!allowShare" [(ngModel)]="sharing_room_with"  name="sharing_room_with" title="Share">
+<input *ngIf="allowShare" [(ngModel)]="sharing_room_with"  name="sharing_room_with" title="Share">
+<input *ngIf="!allowShare" readonly value="" name="sharing_room_with" title="Share">
 </form>
 
 <style>

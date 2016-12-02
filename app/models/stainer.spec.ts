@@ -20,7 +20,13 @@ describe('Stainer class', () => {
             stainer = createStainer(
                 [{id: '10'}, {id: '11'}],
                 [{id: '1', periods: [['05.11'], ['01.11', '02.11']]}, {id: '2', periods: [['01.11'], ['03.11']]}],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
         });
 
@@ -50,7 +56,13 @@ describe('Stainer class', () => {
                     {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
                     {id: '5', hotel_id: '12', periods: [['01.11'], ['03.11', '04.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setCheckInDay('02.11');
         });
@@ -59,8 +71,8 @@ describe('Stainer class', () => {
             expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11',  '04.11', '05.11']);
         });
 
-        it('For check-out should return days of periods with check-in date and later check-in', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11', '04.11']);
+        it('For check-out should return days of periods with check-in date and not earlier check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['02.11', '03.11', '04.11']);
         });
 
         it('For rooms return empty array', () => {
@@ -78,35 +90,41 @@ describe('Stainer class', () => {
             stainer = createStainer(
                 [{id: '10'}, {id: '11'}, {id: '12'}],
                 [
-                    {id: '1', hotel_id: '10', periods: [['05.11'], ['02.11', '03.11']]},
+                    {id: '1', hotel_id: '10', periods: [['01.11'], ['02.11', '03.11']]},
                     {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
                     {id: '3', hotel_id: '10', periods: [['02.11', '03.11']]},
-                    {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
-                    {id: '5', hotel_id: '12', periods: [['01.11', '02.11'], ['04.11']]}
+                    {id: '4', hotel_id: '11', periods: [['01.11'], ['02.11', '03.11', '04.11']]},
+                    {id: '5', hotel_id: '12', periods: [['01.11'], ['02.11'], ['04.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setCheckOutDay('03.11');
         });
 
-        it('For check-in should return days of periods with check-out date and earlier check-out', () => {
-            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11']);
+        it('For check-in should return days of periods with check-out date and not later check-out-1', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['02.11']);
         });
 
         it('For check-out should return all days of rooms', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11',  '04.11', '05.11']);
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11',  '04.11']);
         });
 
         it('For rooms return empty array', () => {
             expect(stainer.getRooms().length).toEqual(0);
         });
 
-        it('Should return all hotels room which contains the check-out', () => {
-            expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11']);
+        it('Should return all hotels room which contains the date  = check-out-1', () => {
+            expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11', '12']);
         });
     });
 
-    describe('When select dates only - check-out and check-out', () => {
+    describe('When select dates only - check-in and check-out', () => {
         let stainer: Stainer;
         beforeEach(() => {
             stainer = createStainer(
@@ -116,28 +134,34 @@ describe('Stainer class', () => {
                     {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
                     {id: '3', hotel_id: '10', periods: [['02.11', '03.11']]},
                     {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
-                    {id: '5', hotel_id: '12', periods: [['01.11', '02.11'], ['04.11']]},
+                    {id: '5', hotel_id: '12', periods: [['01.11'], ['04.11']]},
                     {id: '6', hotel_id: '12', periods: [['01.11'], ['03.11', '04.11']]},
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setCheckInDay('02.11');
             stainer.setCheckOutDay('03.11');
         });
 
-        it('For check-in should return days of periods with check-out date and earlier check-out', () => {
+        it('For check-in should return days of periods with check-out date and not later check-out-1', () => {
             expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11']);
         });
 
-        it('For check-out should return days of periods with check-in date and later check-in', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11', '04.11']);
+        it('For check-out should return days of periods with check-in date and not earlier check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['02.11', '03.11', '04.11']);
         });
 
         it('For rooms return empty array', () => {
             expect(stainer.getRooms().length).toEqual(0);
         });
 
-        it('Should return all hotels room which contains period include simultaneously check-in and check-out', () => {
+        it('Should return all hotels room which contains period include simultaneously check-in and check-out-1', () => {
             expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11']);
         });
     });
@@ -152,7 +176,13 @@ describe('Stainer class', () => {
                     {id: '2', hotel_id: '10', periods: [['01.11', '02.11'], ['04.11']]},
                     {id: '3', hotel_id: '11', periods: [['01.11'], ['03.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
         });
@@ -180,7 +210,13 @@ describe('Stainer class', () => {
                     {id: '1', hotel_id: '10', periods: [['05.11'], ['01.11', '02.11']]},
                     {id: '2', hotel_id: '11', periods: [['01.11'], ['03.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setRoom('1');
@@ -212,7 +248,13 @@ describe('Stainer class', () => {
                     {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
                     {id: '5', hotel_id: '12', periods: [['01.11'], ['03.11', '04.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setRoom('1');
@@ -223,8 +265,8 @@ describe('Stainer class', () => {
             expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11', '05.11']);
         });
 
-        it('For check-out should return days of period with check-in date and later check-in', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11']);
+        it('For check-out should return days of period with check-in date and not earlier check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['02.11', '03.11']);
         });
 
         it('For rooms should return hotel\'s rooms that have periods including check-in', () => {
@@ -242,32 +284,81 @@ describe('Stainer class', () => {
             stainer = createStainer(
                 [{id: '10'}, {id: '11'}, {id: '12'}],
                 [
-                    {id: '1', hotel_id: '10', periods: [['05.11'], ['01.11', '02.11', '03.11']]},
+                    {id: '1', hotel_id: '10', periods: [['01.11', '02.11'], ['03.11', '04.11']]},
                     {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
-                    {id: '3', hotel_id: '10', periods: [['01.11', '02.11', '03.11', '04.11']]},
+                    {id: '3', hotel_id: '10', periods: [['02.11', '03.11', '04.11']]},
                     {id: '4', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
-                    {id: '5', hotel_id: '12', periods: [['01.11'], ['03.11', '04.11']]}
+                    {id: '5', hotel_id: '12', periods: [['01.11', '02.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setRoom('1');
-            stainer.setCheckOutDay('02.11');
+            stainer.setCheckOutDay('04.11');
         });
 
-        it('For check-in should return days of period with check-out date and earlier check-out', () => {
-            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11']);
+        it('For check-in should return days of period with check-out date and not later check-out-1', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['03.11']);
         });
 
         it('For check-out should return all days of selected room', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11', '05.11']);
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11', '04.11']);
         });
 
-        it('For rooms should return hotel\'s rooms that have periods including check-out', () => {
+        it('For rooms should return hotel\'s rooms that have periods including day = check-out-1', () => {
             expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '3']);
         });
 
-        it('Should return all hotels room which contains the check-out', () => {
+        it('Should return all hotels room which contains the day = check-out-1', () => {
+            expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11']);
+        });
+    });
+
+    describe('When select hotel, room and check-out set as +1 day', () => {
+        let stainer: Stainer;
+        beforeEach(() => {
+            stainer = createStainer(
+                [{id: '10'}, {id: '11'}, {id: '12'}],
+                [
+                    {id: '1', hotel_id: '10', periods: [['01.11', '02.11'], ['03.11', '04.11']]},
+                    {id: '2', hotel_id: '10', periods: [['01.11'], ['04.11']]},
+                    {id: '3', hotel_id: '10', periods: [['02.11', '03.11', '04.11']]},
+                    {id: '4', hotel_id: '10', periods: [['02.11', '03.11']]},
+                    {id: '5', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
+                    {id: '6', hotel_id: '12', periods: [['01.11', '02.11']]}
+                ],
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
+            );
+            stainer.setHotel('10');
+            stainer.setRoom('1');
+            stainer.setCheckOutDay('05.11');
+        });
+
+        it('For check-in should return days of period with check-out date and not later check-out-1', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['03.11', '04.11']);
+        });
+
+        it('For check-out should return all days of selected room', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11', '04.11']);
+        });
+
+        it('For rooms should return hotel\'s rooms that have periods including day = check-out-1', () => {
+            expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '2', '3']);
+        });
+
+        it('Should return all hotels room which contains the day = check-out-1', () => {
             expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11']);
         });
     });
@@ -284,10 +375,16 @@ describe('Stainer class', () => {
                     {id: '4', hotel_id: '10', periods: [['01.11', '02.11']]},
                     {id: '5', hotel_id: '10', periods: [['03.11', '04.11']]},
                     {id: '6', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
-                    {id: '7', hotel_id: '12', periods: [['01.11', '02.11'], ['04.11']]},
+                    {id: '7', hotel_id: '12', periods: [['01.11'], ['04.11']]},
                     {id: '8', hotel_id: '12', periods: [['03.11', '04.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setRoom('1');
@@ -295,19 +392,19 @@ describe('Stainer class', () => {
             stainer.setCheckOutDay('03.11');
         });
 
-        it('For check-in should return days of period with check-out date and earlier check-out', () => {
+        it('For check-in should return days of period with check-out date and not later check-out-1', () => {
             expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11']);
         });
 
-        it('For check-out should return days of period with check-in date and later check-in', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11', '04.11']);
+        it('For check-out should return days of period with check-in date and not later check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['02.11', '03.11', '04.11']);
         });
 
-        it('For rooms should return hotel\'s rooms that have periods including simultaneously check-in and check-out', () => {
-            expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '3']);
+        it('For rooms should return hotel\'s rooms that have periods including simultaneously check-in and day check-out-1', () => {
+            expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '3', '4']);
         });
 
-        it('Should return all hotels room which contains period include simultaneously check-in and check-out', () => {
+        it('Should return all hotels room which contains period include simultaneously check-in and day check-out-1', () => {
             expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11']);
         });
     });
@@ -325,7 +422,13 @@ describe('Stainer class', () => {
                     {id: '5', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
                     {id: '6', hotel_id: '12', periods: [['01.11'], ['03.11', '04.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setCheckInDay('02.11');
@@ -335,8 +438,8 @@ describe('Stainer class', () => {
             expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['02.11', '03.11', '04.11', '05.11']);
         });
 
-        it('For check-out should return days of hotel\'s periods with check-in date and later check-in', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11']);
+        it('For check-out should return days of hotel\'s periods with check-in date and not earlier check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['02.11', '03.11']);
         });
 
         it('For rooms should return hotel\'s rooms that have periods including check-in', () => {
@@ -355,19 +458,25 @@ describe('Stainer class', () => {
                 [{id: '10'}, {id: '11'}, {id: '12'}],
                 [
                     {id: '1', hotel_id: '10', periods: [['05.11'], ['02.11', '03.11']]},
-                    {id: '2', hotel_id: '10', periods: [['02.11'], ['04.11']]},
-                    {id: '3', hotel_id: '10', periods: [['03.11', '04.11']]},
+                    {id: '2', hotel_id: '10', periods: [['04.11']]},
+                    {id: '3', hotel_id: '10', periods: [['02.11', '03.11', '04.11']]},
                     {id: '4', hotel_id: '10', periods: [['02.11']]},
                     {id: '5', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
                     {id: '6', hotel_id: '11', periods: [['01.11', '02.11'], ['04.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setCheckOutDay('03.11');
         });
 
-        it('For check-in should return days of hotel\'s periods with check-out date and earlier check-out', () => {
+        it('For check-in should return days of hotel\'s periods with check-out date and not later check-out', () => {
             expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['02.11']);
         });
 
@@ -375,8 +484,8 @@ describe('Stainer class', () => {
             expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['02.11', '03.11', '04.11', '05.11']);
         });
 
-        it('For rooms should return hotel\'s rooms that have periods including check-out', () => {
-            expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '3']);
+        it('For rooms should return hotel\'s rooms that have periods including day check-out-1', () => {
+            expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '3', '4']);
         });
 
         it('Should return all hotels room which contains the check-out', () => {
@@ -390,34 +499,42 @@ describe('Stainer class', () => {
             stainer = createStainer(
                 [{id: '10'}, {id: '11'}, {id: '12'}],
                 [
-                    {id: '1', hotel_id: '10', periods: [['05.11'], ['02.11', '03.11', '04.11']]},
+                    {id: '1', hotel_id: '10', periods: [['05.11'], ['02.11', '03.11', '04.11', '05.11']]},
                     {id: '2', hotel_id: '10', periods: [['02.11'], ['04.11', '05.11']]},
                     {id: '3', hotel_id: '10', periods: [['04.11', '05.11', '06.11']]},
                     {id: '4', hotel_id: '10', periods: [['01.11', '02.11', '03.11'], ['04.11']]},
                     {id: '5', hotel_id: '11', periods: [['01.11', '02.11', '03.11', '04.11']]},
-                    {id: '6', hotel_id: '12', periods: [['01.11', '02.11', '03.11']]},
+                    {id: '6', hotel_id: '12', periods: [['01.11', '02.11']]},
                     {id: '7', hotel_id: '12', periods: [['04.11', '05.11', '06.11']]}
                 ],
-                [{id: '01.11'}, {id: '02.11'}, {id: '03.11'}, {id: '04.11'}, {id: '05.11'}, {id: '06.11'}, {id: '07.11'}]
+                [
+                    {id: '01.11', id_check_out: '02.11'},
+                    {id: '02.11', id_check_out: '03.11'},
+                    {id: '03.11', id_check_out: '04.11'},
+                    {id: '04.11', id_check_out: '05.11'},
+                    {id: '05.11', id_check_out: '06.11'},
+                    {id: '06.11', id_check_out: '07.11'},
+                    {id: '07.11', id_check_out: '08.11'}
+                ]
             );
             stainer.setHotel('10');
             stainer.setCheckInDay('03.11');
             stainer.setCheckOutDay('04.11');
         });
 
-        it('For check-in should return days of hotel\'s periods with check-out date and earlier check-out', () => {
-            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['02.11', '03.11']);
+        it('For check-in should return days of hotel\'s periods with check-out date and not later day check-out-1', () => {
+            expect(stainer.getCheckInDays().map(r => r.id)).toEqual(['01.11', '02.11', '03.11']);
         });
 
-        it('For check-out should return days of hotel\'s periods with check-in date and later check-in', () => {
-            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['04.11']);
+        it('For check-out should return days of hotel\'s periods with check-in date and not earlier check-in', () => {
+            expect(stainer.getCheckOutDays().map(r => r.id)).toEqual(['03.11', '04.11', '05.11']);
         });
 
-        it('For rooms should return hotel\'s rooms that have periods including simultaneously check-in and check-out', () => {
-            expect(stainer.getRooms().map(r => r.id)).toEqual(['1']);
+        it('For rooms should return hotel\'s rooms that have periods including simultaneously check-in and check-out-1', () => {
+            expect(stainer.getRooms().map(r => r.id)).toEqual(['1', '4']);
         });
 
-        it('Should return all hotels room which contains period include simultaneously check-in and check-out', () => {
+        it('Should return all hotels, room which contains period include simultaneously check-in and check-out-1', () => {
             expect(stainer.getHotels().map(h => h.id)).toEqual(['10', '11']);
         });
     });

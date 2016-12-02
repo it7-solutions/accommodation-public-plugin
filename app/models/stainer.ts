@@ -51,7 +51,7 @@ export class Stainer {
     }
 
     public setCheckOutDay(id: string) {
-        this.checkOut = this.days.get(id);
+        this.checkOut = this.days.items.find(d => d.id_check_out === id);
     }
 
     public getHotels(): Hotel[] {
@@ -65,7 +65,8 @@ export class Stainer {
 
     public getCheckInDays(): Day[] {
         let days: Day[] = this.room ? this.getDaysForRoom(this.room) : this.getAllRoomsDays();
-        return this.filterDaysGivenCheckOut(days);
+        let r = this.filterDaysGivenCheckOut(days);
+        return r;
     }
 
     public getCheckOutDays(): Day[] {
@@ -107,7 +108,7 @@ export class Stainer {
             // For cases filled Check-out only
             return hotels.filter(h => {
                 return !!this.getHotelRooms(h.id).filter(r => {
-                    return !!this.findPeriod(r, this.checkOut.id).length
+                    return !!this.findPeriod(r, undefined, this.checkOut.id).length
                 }).length;
             });
         }
@@ -134,7 +135,7 @@ export class Stainer {
         } else if (this.checkOut) {
             // For cases filled Check-out only
             return rooms.filter(r => {
-                return !!this.findPeriod(r, this.checkOut.id).length
+                return !!this.findPeriod(r, undefined, this.checkOut.id).length
             });
         }
         return rooms;
@@ -143,16 +144,16 @@ export class Stainer {
     private filterDaysGivenCheckOut(days: Day[]): Day[] {
         if (this.checkOut) {
             if (this.room) {
-                let period = this.findPeriod(this.room, this.checkOut.id);
-                let ids = this.getDayIdsToButExcluding(period, this.checkOut.id);
+                let period = this.findPeriod(this.room,  undefined, this.checkOut.id);
+                let ids = this.getDayIdsToForCheckOut(period, this.checkOut.id);
                 return this.days.getByIds(ids);
             } else if (this.hotel) {
                 let ids: string[] = [];
                 this.rooms.items.forEach(
                     r => {
                         if(this.hotel.id === r.hotel_id) {
-                            let period = this.findPeriod(r, this.checkOut.id);
-                            this.getDayIdsToButExcluding(period, this.checkOut.id).forEach(id => ids.push(id));
+                            let period = this.findPeriod(r,  undefined, this.checkOut.id);
+                            this.getDayIdsToForCheckOut(period, this.checkOut.id).forEach(id => ids.push(id));
                         }
                     }
                 );
@@ -162,8 +163,8 @@ export class Stainer {
                 let ids: string[] = [];
                 this.rooms.items.forEach(
                     r => {
-                        let period = this.findPeriod(r, this.checkOut.id);
-                        this.getDayIdsToButExcluding(period, this.checkOut.id).forEach(id => ids.push(id));
+                        let period = this.findPeriod(r,  undefined, this.checkOut.id);
+                        this.getDayIdsToForCheckOut(period, this.checkOut.id).forEach(id => ids.push(id));
                     }
                 );
                 return this.days.getByIds(ids);
@@ -177,7 +178,7 @@ export class Stainer {
             if (this.room) {
                 // If select Room
                 let period = this.findPeriod(this.room, this.checkIn.id);
-                let ids = this.getDayIdsFromButExcluding(period, this.checkIn.id);
+                let ids = this.getDayIdsFrom(period, this.checkIn.id);
                 return this.days.getByIds(ids);
             } else if (this.hotel) {
                 // If select Only Hotel
@@ -186,7 +187,7 @@ export class Stainer {
                     r => {
                         if(this.hotel.id === r.hotel_id){
                             let period = this.findPeriod(r, this.checkIn.id);
-                            this.getDayIdsFromButExcluding(period, this.checkIn.id).forEach(id => ids.push(id));
+                            this.getDayIdsFrom(period, this.checkIn.id).forEach(id => ids.push(id));
                         }
                     }
                 );
@@ -197,13 +198,40 @@ export class Stainer {
                 this.rooms.items.forEach(
                     r => {
                         let period = this.findPeriod(r, this.checkIn.id);
-                        this.getDayIdsFromButExcluding(period, this.checkIn.id).forEach(id => ids.push(id));
+                        this.getDayIdsFrom(period, this.checkIn.id).forEach(id => ids.push(id));
                     }
                 );
                 return this.days.getByIds(ids);
             }
         }
         return days;
+    }
+
+    private getDayIdsTo(period: string[], dayId: string): string[] {
+        let found = false;
+        return period.filter(
+            id => {
+                let current = id === dayId;
+                found = (found || current);
+                return !found || current;
+            }
+        );
+    }
+
+    private getDayIdsToForCheckOut(period: string[], dayId: string): string[] {
+        let found = false;
+        return period.filter(
+            id => {
+                let current = id === dayId;
+                found = (found || current);
+                return !found || current;
+            }
+        );
+    }
+
+    private getDayIdsFrom(period: string[], dayId: string) : string[] {
+        let found = false;
+        return period.filter(id => found = (found || id === dayId));
     }
 
     /**
@@ -242,12 +270,14 @@ export class Stainer {
         );
     }
 
-    private findPeriod(room: Room, date1Id: string, date2Id: string = ''): string[] {
+    private findPeriod(room: Room, checkInId: string, checkOutId: string = ''): string[] {
         let periods: string[][];
-        if (date2Id) {
-            periods = room.periods.filter(p => !!(p.find(id => id === date1Id) && p.find(id => id === date2Id)));
+        if (checkInId && checkOutId) {
+            periods = room.periods.filter(p => !!(p.find(id => id === checkInId) && p.find(id => id === checkOutId)));
+        } else if(checkInId) {
+            periods = room.periods.filter(p => !!p.find(id => id === checkInId));
         } else {
-            periods = room.periods.filter(p => !!p.find(id => id === date1Id));
+            periods = room.periods.filter(p => !!p.find(id => id === checkOutId));
         }
         return periods.length > 0 ? periods[0] : [];
     }
